@@ -129,6 +129,7 @@ public class MyUI extends UI {
                     + ", it works!"));
         });
         
+        //Button 1
         Button button1 = new Button("Add Donna");
         button.addClickListener(e -> {
             layout.addComponent(new Label("Thanks " + name.getValue() 
