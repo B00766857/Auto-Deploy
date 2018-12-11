@@ -22,6 +22,7 @@ import com.vaadin.ui.GridLayout;
 
 
 
+
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
  * (or tab) or some part of an HTML page where a Vaadin application is embedded.
@@ -76,7 +77,7 @@ public class MyUI extends UI {
                           
         final VerticalLayout vlayout = new VerticalLayout();
 
-        vlayout.addComponents(staffID,  phone, addButton);
+      
 
 
         try 
@@ -99,14 +100,40 @@ public class MyUI extends UI {
             Grid<Customer> myGrid = new Grid<>();
             // Set the items (List)
             myGrid.setItems(customers);
+
+           
+
             // Configure the order and the caption of the grid
             myGrid.addColumn(Customer::getFirst_name).setCaption("Name");
             myGrid.addColumn(Customer::getLast_name).setCaption("Surname");
             myGrid.addColumn(Customer::getAmount).setCaption("Total Amount");
             myGrid.addColumn(Customer::isPaid).setCaption("Paid");
 
-        // Add the grid to the list
-        layout.addComponent(myGrid);
+        
+        
+        
+        final TextField name = new TextField();
+        tname.setCaption("Type your name here:");
+
+        Button button = new Button("Add Elaine");
+        button.addClickListener(e -> {
+            vlayout.addComponent(new Label("Thanks " + name.getValue() 
+                    + ", it works!"));
+        });
+        
+        //Button 1
+        Button button1 = new Button("Add Donna");
+        button.addClickListener(e -> {
+            vlayout.addComponent(new Label("Thanks " + name.getValue() 
+                    + ", it works!"));
+        });
+
+        vlayout.addComponents(tname, button, button1);
+
+        layout.addComponents(logo, vlayout);
+
+          // Add the grid to the list
+          layout.addComponent(myGrid);
         } 
         catch (Exception e) 
         {
@@ -114,29 +141,6 @@ public class MyUI extends UI {
             layout.addComponent(new Label(e.getMessage()));
         }
 
-        
-     
-
-       
-      setContent(layout); 
-        
-        final TextField name = new TextField();
-        tname.setCaption("Type your name here:");
-
-        Button button = new Button("Add Elaine");
-        button.addClickListener(e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
-        });
-        
-        //Button 1
-        Button button1 = new Button("Add Donna");
-        button.addClickListener(e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
-        });
-
-        layout.addComponents(tname, button, button1);
         
         setContent(layout);
     }
