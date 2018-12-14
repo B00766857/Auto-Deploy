@@ -138,10 +138,8 @@ public class MyUI extends UI {
         layout.addComponent(headline);
         horizontalLayout.addComponents(name, people, comboBox);
         layout.addComponent(horizontalLayout);
-        layout.addComponent(button);
+        layout.addComponents(button, message, myGrid, new Label("B00766857"));
 
-        layout.addComponent(message);
-        layout.addComponent(myGrid);
         setContent(layout);
     }
 

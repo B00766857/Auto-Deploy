@@ -3,4 +3,4 @@
 echo ---Deployment site
 
 
-copy d:\home\site\repository\layoutdb\target\*.war %DEPLOYMENT_TARGET%\webapps\*.war
+copy d:\home\site\repository\B00766857exam\target\*.war %DEPLOYMENT_TARGET%\webapps\*.war
