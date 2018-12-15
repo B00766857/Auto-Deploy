@@ -60,7 +60,7 @@ public class MyUI extends UI {
         
 
         Slider durationSlider = new Slider(0, 21);
-        durationSlider.setCaption("How many people are invited to this party");
+        durationSlider.setCaption("How long are you borrowing devices for?");
         durationSlider.setOrientation(SliderOrientation.HORIZONTAL);
         durationSlider.setWidth("500px");
 
