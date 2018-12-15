@@ -83,7 +83,7 @@ public class MyUI extends UI {
 	    // Connect with JDBC driver to a database
 	    connection = DriverManager.getConnection(connectionString);
      
-        ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM devices;");
+        ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM devicelending;");
 // Convert the resultset that comes back into a List - we need a Java class to represent the data (Customer.java in this case)
 
 // While there are more records in the resultset
@@ -92,8 +92,8 @@ while(rs.next())
     // Add a new Device instantiated with the fields from the record 
 	dv.add(new Device(rs.getString("device"), 
 				rs.getInt("duration"), 
-				rs.getInt("noOfCopies"), 
-                rs.getBoolean("Offsite")));
+				rs.getInt("noofcopies"), 
+                rs.getBoolean("offsite")));
 }
 
         } 
@@ -159,15 +159,7 @@ layout.addComponent(myGrid);
             }
            }
 
-          // int totaldevices = 0;
-          // for (Device d : selected){
-          //  totaldevices = totaldevices + d.getCapacity();
-         //   }
-         //   if (amountSlider.getValue().intValue() > totalcapacity){
-         //       status.setValue("<strong> You have selecred rooms with a max capacity of " + totalcapacity + 
-         //       " which is not enough to hold " + amountSlider.getValue().intValue() + ". <storng>");
-         //       return;
-         //   }
+    
            
             status.setValue("<h3>Success! The group is booked now</h3>");
                 return;
