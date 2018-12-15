@@ -52,30 +52,30 @@ public class MyUI extends UI {
         final HorizontalLayout hlayout = new HorizontalLayout();
 
         Label logo = new Label(
-            "<H1>Marty Party Planners</H1> <p/> <h3>Please enter the details below and click Book</h3>");
+            "<H1>Microsoft Lending Library</H1> <p/> <h3>Please enter the details below and click Book</h3>");
         logo.setContentMode(com.vaadin.shared.ui.ContentMode.HTML);    
         
-        List<Room> rm = new ArrayList<Room>();
+        List<Device> dv = new ArrayList<Device>();
 
         
 
-        Slider amountSlider = new Slider(0, 200);
-        amountSlider.setCaption("How many people are invited to this party");
-        amountSlider.setOrientation(SliderOrientation.HORIZONTAL);
-        amountSlider.setWidth("500px");
+        Slider durationSlider = new Slider(0, 21);
+        durationSlider.setCaption("How many people are invited to this party");
+        durationSlider.setOrientation(SliderOrientation.HORIZONTAL);
+        durationSlider.setWidth("500px");
 
         final Label slidervalue = new Label();
 
-        amountSlider.addValueChangeListener(event -> {
+        durationSlider.addValueChangeListener(event -> {
             int value = event.getValue().intValue();
             slidervalue.setValue(String.valueOf(value));
         });
 
-        final ComboBox children = new ComboBox<String>();
-        children.setItems("Yes", "No");
-        children.setCaption("Are children attending");
+        final ComboBox offsite = new ComboBox<String>();
+        offsite.setItems("Yes", "No");
+        offsite.setCaption("Offsite Lending?");
         
-        Label status = new Label("Your party is not booked yet!", ContentMode.HTML);
+        Label status = new Label("Your lending request is not booked yet.", ContentMode.HTML);
         
         
         try     
@@ -83,18 +83,17 @@ public class MyUI extends UI {
 	    // Connect with JDBC driver to a database
 	    connection = DriverManager.getConnection(connectionString);
      
-        ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM room;");
+        ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM devices;");
 // Convert the resultset that comes back into a List - we need a Java class to represent the data (Customer.java in this case)
 
 // While there are more records in the resultset
 while(rs.next())
 {   
-	// Add a new Customer instantiated with the fields from the record (that we want, we might not want all the fields, note how I skip the id)
-	rm.add(new Room(rs.getInt("id"), 
-				rs.getString("name"), 
-				rs.getInt("capacity"), 
-                rs.getString("feature"),
-                rs.getBoolean("alcohol")));
+    // Add a new Device instantiated with the fields from the record 
+	dv.add(new Device(rs.getString("device"), 
+				rs.getInt("duration"), 
+				rs.getInt("noOfCopies"), 
+                rs.getBoolean("Offsite")));
 }
 
         } 
@@ -105,17 +104,16 @@ while(rs.next())
         }
 
        
-      // Add my component, grid is templated with Customer
-Grid<Room> myGrid = new Grid<>();
+      // Add my component, grid is populated with devices listed in the devices table in our SQL db
+Grid<Device> myGrid = new Grid<>();
 
 // Set the items (List)
-myGrid.setItems(rm);
+myGrid.setItems(dv);
 // Configure the order and the caption of the grid
-myGrid.addColumn(Room::getId).setCaption("Id");
-myGrid.addColumn(Room::getName).setCaption("Name");
-myGrid.addColumn(Room::getCapacity).setCaption("Capacity");
-myGrid.addColumn(Room::getFeature).setCaption("Feature");
-myGrid.addColumn(Room::getAlcohol).setCaption("Alcohol");
+myGrid.addColumn(Device::getName).setCaption("Device");
+myGrid.addColumn(Device::getDuration).setCaption("Duration");
+myGrid.addColumn(Device::getNoOfCopies).setCaption("Number of Copies");
+myGrid.addColumn(Device::getOffSite).setCaption("Offsite Allowed");
 myGrid.setSizeFull();
 myGrid.setSelectionMode(SelectionMode.MULTI);
 
@@ -129,40 +127,49 @@ layout.addComponent(myGrid);
            
          
            if (name.getValue().isEmpty()){
-               status.setValue("<strong> Please enter party name");
+               status.setValue("<strong> Please enter lending request name.");
                return;
            }
-           if (children.getValue()==null){
-               status.setValue("<strong>Please select children, yes or no");
+           if (durationSlider.getValue().intValue() == 0){
+               status.setValue("Please confirm how long you wish to borrow items for");
                return;
            }
 
-           //For Multiple Room selection
-           Set<Room> selected = myGrid.getSelectedItems();
+        
+
+           //For Multiple Device selection
+           Set<Device> selected = myGrid.getSelectedItems();
 
             if (selected.size()==0){
-            status.setValue("<stong> Please select a room");
+            status.setValue("<stong> Please select a device");
             return;
             }
 
-           for (Room r : selected){
-            if (r.getAlcohol()==true && children.getValue().equals("Yes")){
-                status.setValue("<strong>You cannot select any rooms serving alcohol if children are attending");
+           for (Device d : selected){
+            if (d.getNoOfCopies() == 0){
+                status.setValue("<strong>You cannot select an item that is not in stock.</strong>");
                 return;
             }
            }
 
-           int totalcapacity = 0;
-           for (Room r : selected){
-            totalcapacity = totalcapacity + r.getCapacity();
-            }
-            if (amountSlider.getValue().intValue() > totalcapacity){
-                status.setValue("<strong> You have selecred rooms with a max capacity of " + totalcapacity + 
-                " which is not enough to hold " + amountSlider.getValue().intValue() + ". <storng>");
+           for (Device d : selected){
+            if ((d.getOffSite()== false) && (offsite.getValue() == "yes")){
+                status.setValue("<strong>This item is not allowed to be taken offsite.</strong>");
                 return;
             }
+           }
+
+          // int totaldevices = 0;
+          // for (Device d : selected){
+          //  totaldevices = totaldevices + d.getCapacity();
+         //   }
+         //   if (amountSlider.getValue().intValue() > totalcapacity){
+         //       status.setValue("<strong> You have selecred rooms with a max capacity of " + totalcapacity + 
+         //       " which is not enough to hold " + amountSlider.getValue().intValue() + ". <storng>");
+         //       return;
+         //   }
            
-            status.setValue("<strong>Your party is booked!");
+            status.setValue("<h3>Success! The group is booked now</h3>");
                 return;
 
 
@@ -170,7 +177,7 @@ layout.addComponent(myGrid);
         });
         
 
-        hlayout.addComponents(name, amountSlider, children);
+        hlayout.addComponents(name, durationSlider, offsite);
 
         layout.addComponents(logo, hlayout, button, status, myGrid, new Label("B00766857"));
         
